@@ -1,0 +1,60 @@
+name: ElasticBeanstalkDeploy
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+    CI: false
+    REACT_APP_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    REACT_APP_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    REACT_APP_AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    - name: Installing NPM
+      run: npm install
+    
+    - name: Generate deployment package
+      run: zip -r deploy.zip * -x "**node_modules**"
+      
+    - name: Get timestamp
+      uses: gerred/actions/current-time@master
+      id: current-time
+
+    - name: Run string replace
+      uses: frabert/replace-string-action@master
+      id: format-time
+      with:
+        pattern: '[:\.]+'
+        string: "${{ steps.current-time.outputs.time }}"
+        replace-with: '-'
+        flags: 'g'
+  
+    - name: Beanstalk Deploy my app
+      uses: einaregilsson/beanstalk-deploy@v18
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws_session_token: ${{ secrets.AWS_SESSION_TOKEN }}
+        application_name: test-bootcamp
+        environment_name: Test-bootcamp-env
+        region: us-east-1
+        version_label: "app-version-${{ steps.format-time.outputs.replaced }}" #Using timestamp for the versions
+        deployment_package: deploy.zip
+
+    - name: Deployed successfully!
+      run: echo App deployed to ELB
