@@ -16,7 +16,7 @@ export const S3Viewer = () => {
 
     const getFromS3 = (e) => {
         const params = {
-            Bucket: 'test-githubactions-bootcamp-xd'
+            Bucket: 'react-test-deploy-benitez'
         };
         s3.listObjectsV2(params, (err, data) => {
             if (err) {

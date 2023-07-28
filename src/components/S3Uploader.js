@@ -23,7 +23,7 @@ export const S3Uploader = () => {
           return;
         }
         const params = { 
-          Bucket: 'test-githubactions-bootcamp-xd', 
+          Bucket: 'react-test-deploy-benitez', 
           Key: `${Date.now()}.${file.name}`, 
           Body: file 
         };
