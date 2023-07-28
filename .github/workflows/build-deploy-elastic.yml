@@ -50,8 +50,8 @@ jobs:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws_session_token: ${{ secrets.AWS_SESSION_TOKEN }}
-        application_name: test-bootcamp
-        environment_name: Test-bootcamp-env
+        application_name: ReactBenitez
+        environment_name: ReactBenitez-env
         region: us-east-1
         version_label: "app-version-${{ steps.format-time.outputs.replaced }}" #Using timestamp for the versions
         deployment_package: deploy.zip
